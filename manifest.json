@@ -1,0 +1,6 @@
+{
+  "name": "Fresh Focus",
+  "version": "1.0",
+  "description": "A simple chrome extension to improve focus using the Pomodoro Technique",
+  "manifest_version": 2
+}
