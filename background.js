@@ -4,6 +4,9 @@ document.getElementById("addTime").addEventListener("click", addTime);
 document.getElementById("subtractTime").addEventListener("click", subtractTime);
 
 var setTimer = function() {
+  document.getElementById("addTime").removeEventListener("click", addTime);
+  document.getElementById("subtractTime").removeEventListener("click", subtractTime);
+
   var mins = Number(document.getElementById("mins").innerHTML) * 60 * 1000;
   var secs = Number(document.getElementById("secs").innerHTML) * 1000;
   return timerWithLimit(mins+secs);
