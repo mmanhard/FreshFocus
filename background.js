@@ -1,3 +1,9 @@
+// Constants
+const defaultMinChange = 5;
+const smallMinChange = 1;
+const maxMins = 60;
+const minMins = 1;
+
 var addTime = function() {return changeTime(true)};
 var subtractTime = function() {return changeTime(false)};
 document.getElementById("addTime").addEventListener("click", addTime);
@@ -16,17 +22,17 @@ document.getElementById("start").addEventListener("click", setTimer);
 function changeTime(addFlag) {
   var mins = Number(document.getElementById("mins").innerHTML);
 
-  var minChange = 5;
+  var minChange = defaultMinChange;
   if (mins + addFlag <= minChange) {
-    minChange = 1;
+    minChange = smallMinChange;
   }
 
   if (addFlag) {
-    if (mins < 60) {
+    if (mins < maxMins) {
       document.getElementById("mins").innerHTML = mins + minChange;
     }
   } else {
-    if (mins > 1) {
+    if (mins > minMins) {
       document.getElementById("mins").innerHTML = mins - minChange;
     }
   }
