@@ -13,11 +13,6 @@ var setTimer = function() {
 };
 document.getElementById("start").addEventListener("click", setTimer);
 
-function convertTimeToNumber(time) {
-  var minutes =  time.substring(0,time.indexOf("m"))
-  return 1500000;
-}
-
 function changeTime(addFlag) {
   var mins = Number(document.getElementById("mins").innerHTML);
 
