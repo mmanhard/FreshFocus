@@ -20,10 +20,20 @@ function convertTimeToNumber(time) {
 
 function changeTime(addFlag) {
   var mins = Number(document.getElementById("mins").innerHTML);
+
+  var minChange = 5;
+  if (mins + addFlag <= minChange) {
+    minChange = 1;
+  }
+
   if (addFlag) {
-    document.getElementById("mins").innerHTML = mins + 5;
+    if (mins < 60) {
+      document.getElementById("mins").innerHTML = mins + minChange;
+    }
   } else {
-    document.getElementById("mins").innerHTML = mins - 5;
+    if (mins > 1) {
+      document.getElementById("mins").innerHTML = mins - minChange;
+    }
   }
 }
 
