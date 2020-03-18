@@ -1,44 +1,51 @@
 // Constants
-const defaultMins = 25;
-const defaultSecs = 0;
-const defaultMinChange = 5;
-const smallMinChange = 1;
-const maxMins = 60;
-const minMins = 1;
+const defaultMins = 25,     defaultSecs = 0;
+const defaultMinChange = 5, smallMinChange = 1;
+const minMins = 1,          maxMins = 60;
+
+var myTimer;
 
 chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) {
   if (result.blocked) {
     console.log("Blocked");
 
+    addStopListeners();
+
     // Update the count down every 1 second
-    var x = setInterval(function() {
-      setTime(result.startTime, result.timeLimit)
+    myTimer = setInterval(function() {
+      checkTime(result.startTime, result.timeLimit)
     }, 1000);
-    setTime(result.startTime, result.timeLimit);
   } else {
     console.log("Not blocked");
-
-    const addTime = function() {return changeTime(true)};
-    document.getElementById("addTime").addEventListener("click", addTime);
-
-    const subtractTime = function() {return changeTime(false)};
-    document.getElementById("subtractTime").addEventListener("click", subtractTime);
-
-    const setTimer = function() {
-      document.getElementById("addTime").removeEventListener("click", addTime);
-      document.getElementById("subtractTime").removeEventListener("click", subtractTime);
-
-      var mins = Number(document.getElementById("mins").innerHTML) * 60 * 1000;
-      var secs = Number(document.getElementById("secs").innerHTML) * 1000;
-
-      return timerWithLimit(mins+secs);
-    };
-    document.getElementById("start").addEventListener("click", setTimer);
+    addStartListeners();
   }
 });
 
+function addStartListeners() {
+  const addTime = function() {return changeTime(true)};
+  document.getElementById("addTime").addEventListener("click", addTime);
+
+  const subtractTime = function() {return changeTime(false)};
+  document.getElementById("subtractTime").addEventListener("click", subtractTime);
+
+  const setTimer = function() {
+    document.getElementById("addTime").removeEventListener("click", addTime);
+    document.getElementById("subtractTime").removeEventListener("click", subtractTime);
+
+    const mins = Number(document.getElementById("mins").innerHTML) * 60 * 1000;
+    const secs = Number(document.getElementById("secs").innerHTML) * 1000;
+
+    return startTimer(mins+secs);
+  };
+  document.getElementById("start").addEventListener("click", setTimer);
+}
+
+function addStopListeners() {
+  document.getElementById("stop").addEventListener("click", stopTimer);
+}
+
 function changeTime(addFlag) {
-  var mins = Number(document.getElementById("mins").innerHTML);
+  const mins = Number(document.getElementById("mins").innerHTML);
 
   var minChange = defaultMinChange;
   if (mins + addFlag <= minChange) {
@@ -56,32 +63,35 @@ function changeTime(addFlag) {
   }
 }
 
-function timerWithLimit(timeLimit) {
-
-  chrome.storage.sync.set({"timeLimit": timeLimit}, function() {
-          console.log('Time limit is set to ' + timeLimit);
-  });
+function startTimer(timeLimit) {
 
   let startTime = new Date().getTime();
-  chrome.storage.sync.set({"startTime": startTime}, function() {
-          console.log('Start time is set to ' + startTime);
-  });
-
+  chrome.storage.sync.set({"startTime": startTime});
+  chrome.storage.sync.set({"timeLimit": timeLimit});
   chrome.storage.sync.set({"blocked": true});
 
   // Update the count down every 1 second
-  var x = setInterval(function() {
-    setTime(startTime, timeLimit)
+  myTimer = setInterval(function() {
+    checkTime(startTime, timeLimit)
   }, 1000);
 }
 
-function addZeroPad(num, numDigits) {
-  strNum = String(num)
-  while (strNum.length < numDigits) {strNum = '0' + strNum}
-  return strNum
+function stopTimer() {
+  chrome.storage.sync.remove(['startTime', 'timeLimit']);
+  chrome.storage.sync.set({'blocked': false});
+
+  clearInterval(myTimer)
+  setTime(defaultMins, defaultSecs);
+  addStartListeners();
 }
 
-function setTime(start, limit) {
+function addZeroPad(num, numDigits) {
+  strNum = String(num);
+  while (strNum.length < numDigits) {strNum = '0' + strNum};
+  return strNum;
+}
+
+function checkTime(start, limit) {
   // Get the current time.
   let now = new Date().getTime();
 
@@ -94,12 +104,13 @@ function setTime(start, limit) {
   if (remaining > 0) {
     mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
     secs = Math.floor((remaining % (1000 * 60)) / 1000);
+    setTime(mins, secs);
   } else {
-    mins = defaultMins;
-    secs = defaultSecs;
-    chrome.storage.sync.set({"blocked": false});
+    stopTimer();
   }
+}
 
+function setTime(mins, secs) {
   document.getElementById("mins").innerHTML = addZeroPad(mins, 2);
   document.getElementById("secs").innerHTML = addZeroPad(secs, 2);
 }
