@@ -63,12 +63,20 @@ function changeTime(addFlag) {
   }
 }
 
+// function addToBlackList() {
+//   let newURL = document.getElementById("newURL").innerHTML
+// }
+
 function startTimer(timeLimit) {
 
   let startTime = new Date().getTime();
   chrome.storage.sync.set({"startTime": startTime});
   chrome.storage.sync.set({"timeLimit": timeLimit});
   chrome.storage.sync.set({"blocked": true});
+  urls = ["*://*.facebook.com/*", "*://*.cnn.com/*", "*://*.twitter.com/*"]
+  chrome.storage.sync.set({"urls": JSON.stringify(urls)});
+
+  chrome.runtime.sendMessage({filter: "update"});
 
   // Update the count down every 1 second
   myTimer = setInterval(function() {
@@ -79,6 +87,8 @@ function startTimer(timeLimit) {
 function stopTimer() {
   chrome.storage.sync.remove(['startTime', 'timeLimit']);
   chrome.storage.sync.set({'blocked': false});
+
+  chrome.runtime.sendMessage({filter: "remove"});
 
   clearInterval(myTimer)
   setTime(defaultMins, defaultSecs);
