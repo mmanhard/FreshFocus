@@ -38,6 +38,15 @@ function addStartListeners() {
     return startTimer(mins+secs);
   };
   document.getElementById("start").addEventListener("click", setTimer);
+
+  const addURL = function() {return addToBlackList()};
+  document.getElementById("addURL").addEventListener("click", addURL);
+
+  const clearURLs = function() {return clearBlackList()};
+  document.getElementById("clearURLs").addEventListener("click", clearURLs);
+
+  // const printURLs = function() {return printBlackList()};
+  // document.getElementById("printURLs").addEventListener("click", printURLs);
 }
 
 function addStopListeners() {
@@ -63,9 +72,34 @@ function changeTime(addFlag) {
   }
 }
 
-// function addToBlackList() {
-//   let newURL = document.getElementById("newURL").innerHTML
+function clearBlackList() {
+  chrome.storage.sync.remove(['urls']);
+}
+
+// function printBlackList() {
+//   chrome.storage.sync.get(['urls'], function(result){
+//     console.log(result.urls);
+//   });
 // }
+
+function addToBlackList() {
+  let newURL = document.getElementById("newURL").value;
+  newURL = convertToValidURL(newURL);
+  if (newURL.length > 0) {
+    chrome.storage.sync.get(['urls'], function(result){
+      let urls;
+      if (result.urls) {
+        urls = JSON.parse(result.urls);
+      } else {
+        urls = [];
+      }
+      urls.push(newURL);
+      chrome.storage.sync.set({"urls": JSON.stringify(urls)});
+    });
+  } else {
+    console.log("Invalid URL");
+  }
+}
 
 function startTimer(timeLimit) {
 
@@ -73,8 +107,6 @@ function startTimer(timeLimit) {
   chrome.storage.sync.set({"startTime": startTime});
   chrome.storage.sync.set({"timeLimit": timeLimit});
   chrome.storage.sync.set({"blocked": true});
-  urls = ["*://*.facebook.com/*", "*://*.cnn.com/*", "*://*.twitter.com/*"]
-  chrome.storage.sync.set({"urls": JSON.stringify(urls)});
 
   chrome.runtime.sendMessage({filter: "update"});
 
@@ -123,4 +155,35 @@ function checkTime(start, limit) {
 function setTime(mins, secs) {
   document.getElementById("mins").innerHTML = addZeroPad(mins, 2);
   document.getElementById("secs").innerHTML = addZeroPad(secs, 2);
+}
+
+// !! NEEDS AN UPDATE!!
+function convertToValidURL(url) {
+//   <url-pattern> := <scheme>://<host><path>
+// <scheme> := '*' | 'http' | 'https' | 'file' | 'ftp'
+// <host> := '*' | '*.' <any char except '/' and '*'>+
+// <path> := '/' <any chars>
+  const schemeSeparator = "://";
+
+  // Determine scheme
+  let scheme, host, path;
+  let schemeEnd, hostEnd;
+  schemeEnd = url.indexOf(schemeSeparator);
+  if (schemeEnd <= 0) {
+    scheme = "*";
+  } else {
+    scheme = url.substr(0,schemeEnd);
+  }
+
+  if (schemeEnd >= 0) {
+    url = url.substr(schemeEnd+schemeSeparator.length);
+  }
+  console.log(url);
+
+  // Determine host
+  host = url;
+
+  // Determine path
+  path = "*";
+  return scheme+schemeSeparator+"*."+host+"/"+path;
 }
