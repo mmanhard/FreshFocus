@@ -5,6 +5,8 @@ const minMins = 1,          maxMins = 60;
 
 var myTimer;
 
+displayBlackList();
+
 chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) {
   if (result.blocked) {
     console.log("Blocked");
@@ -20,6 +22,22 @@ chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) 
     addStartListeners();
   }
 });
+
+var temp = true;
+const fancyButton = function() {
+    if (temp) {
+      document.getElementById("configure_view").style.visibility = "hidden";
+      document.getElementById("fancy_view").style.visibility = "visible";
+      document.body.style.backgroundColor = "yellow";
+      temp = false;
+      console.log("hello")
+    } else {
+      window.location.href = "test.html"
+      // console.log("goodbye")
+      // chrome.runtime.sendMessage({type: "reload"});
+    }
+};
+document.getElementById("fancy_button").addEventListener("click", fancyButton);
 
 function addStartListeners() {
   const addTime = function() {return changeTime(true)};
@@ -74,6 +92,7 @@ function changeTime(addFlag) {
 
 function clearBlackList() {
   chrome.storage.sync.remove(['urls']);
+  displayBlackList();
 }
 
 // function printBlackList() {
@@ -95,10 +114,27 @@ function addToBlackList() {
       }
       urls.push(newURL);
       chrome.storage.sync.set({"urls": JSON.stringify(urls)});
+
+      var li = document.createElement("li");
+      li.textContent = newURL;
+      document.getElementById("blacklist").appendChild(li);
     });
   } else {
     console.log("Invalid URL");
   }
+}
+
+function displayBlackList() {
+  chrome.storage.sync.get(['urls'], function(result){
+    if (result.urls) {
+      let urls = JSON.parse(result.urls);
+      urls.forEach((url) => {
+        var li = document.createElement("li");
+        li.textContent = url;
+        document.getElementById("blacklist").appendChild(li);
+      });
+    }
+  });
 }
 
 function startTimer(timeLimit) {

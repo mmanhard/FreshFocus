@@ -19,9 +19,29 @@ function removeFilters() {
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
-    if (request.filter == "update")
-      updateFilters();
-    else if (request.filter == "remove") {
-      removeFilters();
+    if (request.filter) {
+      switch (request.filter) {
+        case "update":
+          updateFilters();
+          break;
+
+        case "remove":
+          removeFilters();
+          break;
+        }
+    } else if (request.page) {
+      switch (request.page) {
+        case "configure":
+          chrome.browserAction.setPopup({popup: "../views/configure.html"});
+          break;
+
+        case "session":
+          chrome.browserAction.setPopup({popup: "../views/session.html"});
+          break;
+
+        case "break":
+          chrome.browserAction.setPopup({popup: "../views/break.html"});
+          break;
+      }
     }
 });

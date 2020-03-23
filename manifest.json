@@ -4,7 +4,7 @@
   "description": "A simple chrome extension to improve focus using the Pomodoro Technique.",
   "manifest_version": 2,
   "browser_action": {
-      "default_popup": "interface.html"
+      "default_popup": "views/configure.html"
     },
   "permissions": [
     "storage",

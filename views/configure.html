@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style media="screen">
+      body {
+          min-width:500px;
+      }
+  </style>
+</head>
+<body>
+  <div id="title_view">
+    <h1>Fresh</h1>
+    <h1>  Focus</h1>
+  </div>
+
+  <div id="session_view">
+    <div>
+      <h3>Session Time</h3>
+      <p id="mins">25</p>
+      <button type="button" id="addTime">+</button>
+      <button type="button" id="subtractTime">-</button>
+    </div>
+
+    <hr>
+
+    <div>
+      <h3># of Sessions</h3>
+      <p id="numSessions">4</p>
+      <button type="button" id="incSession">+</button>
+      <button type="button" id="decSession">-</button>
+    </div>
+  </div>
+
+  <button type="button" id="start">Start</button>
+
+  <div id="blacklist_view">
+    <input type="text" placeholder="add URL" id="newURL">
+    <button type="button" name="button" id="addURL">Add URL</button>
+    <button type="button" name="button" id="clearURLs">Clear URLs</button>
+    <ul id="blacklist">
+      <lh>BLACK LIST</lh>
+    </ul>
+  </div>
+
+  <!--  -->
+  <!--  -->
+
+  <!-- <div id="configure_view">
+    <div>
+      <input type="text" placeholder="add URL" id="newURL">
+      <button type="button" name="button" id="addURL">Add URL</button>
+      <button type="button" name="button" id="clearURLs">Clear URLs</button>
+      <button type="button" name="button" id="printURLs">Print URLs</button>
+    </div>
+
+  <div>
+      <button type="button" id="fancy_button">Get Fancy!</button>
+  </div> -->
+
+  <script src="../configure.js"></script>
+</body>
+</html>
