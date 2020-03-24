@@ -36,29 +36,26 @@ li {
   font-size: 18px;
 }
 
-#content {
-  margin: 20px;
-}
-
 h1 {
   font-size: 36px;
-  margin: 0px;
-}
-
-#session_view {
   margin: 0px;
 }
 
 h3 {
   font-size: 24px;
   text-align: center;
+  margin: 0px auto;
+}
+
+hr {
+  border: 1px solid var(--main-dark-color);
 }
 
 .btn-default {
   background-color: var(--main-btn-color);
   color: var(--main-dark-color);
   border: none;
-  margin: 4px;
+  margin: 4px auto;
   box-shadow: 0px 2px 3px 1px var(--main-shadow-color);
   font-size: 36px;
   font-family: 'Rubik Mono One', sans-serif;
@@ -90,16 +87,11 @@ h3 {
   text-align: center;
 }
 
-hr {
-  border: 1px solid var(--main-dark-color);
-}
-
 .config-header {
   grid-column-start: 1;
   grid-column-end: 3;
   grid-row-start: 1;
   grid-row-end: 2;
-  margin:0px;
 }
 
 .config-counter {
@@ -131,6 +123,15 @@ hr {
   background-color: var(--main-lite-color);
   border-radius: 32px;
   height: 64px;
-  margin: 0px;
+  width: 70%;
+  margin: 0px auto;
   font-family: 'Rubik', sans-serif;
+}
+
+#session_view {
+  margin: 0px;
+}
+
+#content {
+  margin: 20px;
 }
