@@ -63,7 +63,7 @@ function startSessions(timeLimit, numSessions) {
 
 function addToBlackList() {
   let newURL = document.getElementById("newURL").value;
-  newURL = convertToValidURL(newURL);
+  newURL = convertToValidURLPattern(newURL);
   if (newURL.length > 0) {
     chrome.storage.sync.get(['urls'], function(result){
       let urls;
@@ -95,7 +95,7 @@ function displayBlackList() {
       let urls = JSON.parse(result.urls);
       urls.forEach((url) => {
         var li = document.createElement("li");
-        li.textContent = url;
+        li.textContent = formatURL(url);
         document.getElementById("blacklist").appendChild(li);
       });
     }
@@ -140,7 +140,7 @@ function changeSession(incrementFlag) {
 }
 
 // !! NEEDS AN UPDATE!!
-function convertToValidURL(url) {
+function convertToValidURLPattern(url) {
 //   <url-pattern> := <scheme>://<host><path>
 // <scheme> := '*' | 'http' | 'https' | 'file' | 'ftp'
 // <host> := '*' | '*.' <any char except '/' and '*'>+
@@ -168,4 +168,14 @@ function convertToValidURL(url) {
   // Determine path
   path = "*";
   return scheme+schemeSeparator+"*."+host+"/"+path;
+}
+
+function formatURL(url) {
+  const schemeSeparator = "://*.";
+  const pathSeparator = "/";
+
+  schemeEnd = url.indexOf(schemeSeparator);
+  url = url.substr(schemeEnd+schemeSeparator.length);
+  hostEnd = url.indexOf(pathSeparator);
+  return url.substr(0,hostEnd);
 }
