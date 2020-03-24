@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style media="screen">
-      body {
-          min-width:500px;
-      }
-  </style>
+  <link rel="stylesheet" type="text/css" href="../public/styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Rubik|Rubik+Mono+One&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="title_view">
-    <h1>Fresh</h1>
-    <h1>  Focus</h1>
+  <div id="content">
+    <div id="title_view">
+      <h1>Fresh</h1>
+      <h1>&emsp;Focus</h1>
+    </div>
+
+    <div class="main_view" id="session_view">
+      <h3>Session Time</h3>
+      <h3>Remaining</h3>
+      <p class="counter"><span id="mins"></span> : <span id="secs"></span></p>
+      <button type="button" class="btn-default" id="abandon">Abandon</button>
+    </div>
+
   </div>
 
-  <div id="session_view">
-    <h3>Session Time</h3>
-    <h3>Remaining</h3>
-    <p><span id="mins"></span> : <span id="secs"></span></p>
-    <button type="button" name="button" id="abandon">Abandon</button>
-  </div>
 
   <script src="../session.js"></script>
 </body>

@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <style media="screen">
-      body {
-          min-width:500px;
-      }
-  </style>
+  <link rel="stylesheet" type="text/css" href="../public/styles.css">
+  <link href="https://fonts.googleapis.com/css?family=Rubik|Rubik+Mono+One&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="title_view">
-    <h1>Fresh</h1>
-    <h1>  Focus</h1>
-  </div>
+  <div id="content">
+    <div id="title_view">
+      <h1>Fresh</h1>
+      <h1>&emsp;Focus</h1>
+    </div>
 
-  <div id="break_view">
-    <h3>Break Time</h3>
-    <h3>Remaining</h3>
-    <p><span id="mins">5</span> : <span id="secs">00</span></p>
+    <div class="main_view" id="break_view">
+      <h3>Break Time</h3>
+      <h3>Remaining</h3>
+      <p class="counter"><span id="mins">5</span> : <span id="secs">00</span></p>
 
-    <hr>
+      <hr>
 
-    <h3># of Sessions</h3>
-    <h3>Remaining</h3>
-    <p id="numSessions"></p>
+      <h3># of Sessions</h3>
+      <h3>Remaining</h3>
+      <p class="counter" id="numSessions"></p>
 
-    <button type="button" id="start">Start</button>
-    <button type="button" id="quit">Quit</button>
+      <button class="btn-default" type="button" id="start">Start</button>
+      <button class="btn-quit" type="button" id="quit">Quit</button>
+    </div>
   </div>
 
   <script src="../break.js"></script>
