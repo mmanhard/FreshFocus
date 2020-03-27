@@ -39,6 +39,7 @@ li {
   color: var(--main-lite-color);
   font-size: 18px;
   margin-bottom: -4px;
+  padding: 0;
 }
 
 h1 {
@@ -61,11 +62,11 @@ hr {
   background-color: var(--main-btn-color);
   color: var(--main-dark-color);
   border: none;
-  margin: 4px auto 12px auto;
+  margin: 4px auto 4px auto;
   box-shadow: 0px 2px 3px 1px var(--main-shadow-color);
   font-size: 36px;
   font-family: 'Rubik Mono One', sans-serif;
-  width: 100%;
+  width: 90%;
 }
 
 .btn-secondary {
@@ -80,17 +81,25 @@ hr {
   font-family: 'Rubik Mono One', sans-serif;
 }
 
+.btn-list {
+  background-color: var(--main-dark-color);
+  color: var(--main-lite-color);
+  border: none;
+  font-family: 'Rubik Mono One', sans-serif;
+}
+
 .btn-quit {
   text-decoration: underline;
   background-color: var(--main-bg-color);
   border: none;
   color: var(--main-dark-color);
-  font-size: 21px;
+  font-size: 12px;
   font-family: 'Rubik Mono One', sans-serif;
 }
 
 .main_view {
   text-align: center;
+  margin-top: 8px;
 }
 
 .config-header {
@@ -131,18 +140,42 @@ hr {
 
 
 .counter {
-  font-size: 36px;
-  text-align: center;
   background-color: var(--main-lite-color);
   border-radius: 32px;
-  height: 64px;
+  height: 80%;
   width: 70%;
-  margin: 0px auto;
+  margin: 8px auto 12px auto;
+}
+
+.counter p {
+  margin: 0px;
+  padding: 9px 0;
+  height: 100%;
+  font-size: 36px;
+  text-align: center;
   font-family: 'Rubik', sans-serif;
 }
 
-#session_view {
-  margin: 0px;
+#newURL {
+  list-style-type: none;
+  margin-bottom: -4px;
+  padding: 0;
+  text-align: center;
+  border: 4px solid var(--main-lite-color);
+  background-color: var(--main-dark-color);
+  color: var(--main-btn-color);
+  font-size: 18px;
+  font-family: 'Rubik Mono One', sans-serif;
+}
+
+#newURL:focus, #newURL:hover {
+  outline: none;
+  filter: brightness(120%);
+}
+
+#newURL::placeholder {
+  color: var(--main-btn-color);
+  opacity: 0.65;
 }
 
 #content {

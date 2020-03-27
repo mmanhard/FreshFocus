@@ -35,8 +35,11 @@ const decrementSession = function() {return changeSession(false)};
 document.getElementById("decSession").addEventListener("click", decrementSession);
 
 // Create event listeners for adding to or clearing the blacklist.
-const addURL = function() {return addToBlackList()};
-document.getElementById("addURL").addEventListener("click", addURL);
+const addURL = function(event) {
+  if(event.which === 13) {
+    addToBlackList();
+  }};
+document.getElementById("newURL").addEventListener("keyup", addURL);
 const clearURLs = function() {return clearBlackList()};
 document.getElementById("clearURLs").addEventListener("click", clearURLs);
 
@@ -63,6 +66,7 @@ function startSessions(timeLimit, numSessions) {
 
 function addToBlackList() {
   let newURL = document.getElementById("newURL").value;
+  document.getElementById("newURL").value = '';
   newURL = convertToValidURLPattern(newURL);
   if (newURL.length > 0) {
     chrome.storage.sync.get(['urls'], function(result){
@@ -75,9 +79,7 @@ function addToBlackList() {
       urls.push(newURL);
       chrome.storage.sync.set({"urls": JSON.stringify(urls)});
 
-      var li = document.createElement("li");
-      li.textContent = newURL;
-      document.getElementById("blacklist").appendChild(li);
+      displayBlackListURL(newURL);
     });
   } else {
     console.log("Invalid URL");
@@ -86,7 +88,12 @@ function addToBlackList() {
 
 function clearBlackList() {
   chrome.storage.sync.remove(['urls']);
-  displayBlackList();
+  let lis = document.getElementById("blacklist").children;
+  for (i = lis.length-1; i > 0; i--) {
+    document.getElementById("blacklist").removeChild(lis[i]);
+    console.log(lis[i]);
+  }
+
 }
 
 function displayBlackList() {
@@ -94,12 +101,29 @@ function displayBlackList() {
     if (result.urls) {
       let urls = JSON.parse(result.urls);
       urls.forEach((url) => {
-        var li = document.createElement("li");
-        li.textContent = formatURL(url);
-        document.getElementById("blacklist").appendChild(li);
+        displayBlackListURL(url);
       });
     }
   });
+}
+
+const test = (event) => {
+  console.log("TEST COMPLETE!");
+  console.log(event);
+};
+
+function displayBlackListURL(url) {
+    var li = document.createElement("li");
+    var span = document.createElement("span");
+    var btn = document.createElement("button");
+    li.appendChild(span);
+    li.appendChild(btn);
+    span.textContent = formatURL(url);
+    btn.textContent = "-";
+    btn.className = "btn-list";
+
+    li.addEventListener("click",test);
+    document.getElementById("blacklist").appendChild(li);
 }
 
 /******************************************/
