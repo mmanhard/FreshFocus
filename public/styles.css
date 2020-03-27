@@ -28,17 +28,22 @@ ul {
   padding: 0;
 }
 
+lh {
+  font-size: 21px;
+}
+
 li {
   list-style-type: none;
-  border: 3px solid var(--main-lite-color);
+  border: 4px solid var(--main-lite-color);
   background-color: var(--main-dark-color);
   color: var(--main-lite-color);
   font-size: 18px;
+  margin-bottom: -4px;
 }
 
 h1 {
   font-size: 36px;
-  margin: 0px;
+  margin: -10px auto 0px auto;
 }
 
 h3 {
@@ -48,6 +53,7 @@ h3 {
 }
 
 hr {
+  margin: 4px auto 12px auto;
   border: 1px solid var(--main-dark-color);
 }
 
@@ -55,7 +61,7 @@ hr {
   background-color: var(--main-btn-color);
   color: var(--main-dark-color);
   border: none;
-  margin: 4px auto;
+  margin: 4px auto 12px auto;
   box-shadow: 0px 2px 3px 1px var(--main-shadow-color);
   font-size: 36px;
   font-family: 'Rubik Mono One', sans-serif;
@@ -68,7 +74,7 @@ hr {
   grid-column-start: 2;
   grid-column-end: 3;
   border: none;
-  margin: 4px;
+  margin: 4px 12px 4px 18px;
   box-shadow: 0px 2px 3px 1px var(--main-shadow-color);
   font-size: 24px;
   font-family: 'Rubik Mono One', sans-serif;
@@ -99,21 +105,28 @@ hr {
   grid-column-end: 2;
   grid-row-start: 2;
   grid-row-end: 4;
-  font-size: 36px;
-  text-align: center;
   background-color: var(--main-lite-color);
   border-radius: 32px;
   height: 80%;
+  margin: 8px 0px auto 12px;;
+}
+
+.config-counter p {
   margin: 0px;
+  padding: 9px 0;
+  height: 100%;
+  font-size: 36px;
+  text-align: center;
   font-family: 'Rubik', sans-serif;
 }
 
 .container-config {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 55% 45%;
   grid-template-rows: 30px 40px 40px;
-  width: 280px;
+  width: 100%;
   height: 120px;
+  margin: 0px;
 }
 
 
@@ -133,5 +146,5 @@ hr {
 }
 
 #content {
-  margin: 20px;
+  margin: 20px 20px;
 }
