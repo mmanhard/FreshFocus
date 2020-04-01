@@ -108,8 +108,20 @@ function displayBlackList() {
 }
 
 const test = (event) => {
-  console.log("TEST COMPLETE!");
-  console.log(event);
+  let li = event.currentTarget.parentNode;
+  let ul = li.parentNode;
+  let index = Array.from(ul.children).indexOf(li);
+
+  chrome.storage.sync.get(['urls'], function(result){
+    let urls;
+    if (result.urls) {
+      urls = JSON.parse(result.urls);
+      urls.splice(index-1,1);
+      document.getElementById("blacklist").removeChild(li);
+      chrome.storage.sync.set({"urls": JSON.stringify(urls)});
+    }
+  });
+
 };
 
 function displayBlackListURL(url) {
@@ -122,7 +134,7 @@ function displayBlackListURL(url) {
     btn.textContent = "-";
     btn.className = "btn-list";
 
-    li.addEventListener("click",test);
+    btn.addEventListener("click",test);
     document.getElementById("blacklist").appendChild(li);
 }
 
