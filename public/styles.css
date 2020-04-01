@@ -168,6 +168,22 @@ hr {
   font-family: 'Rubik Mono One', sans-serif;
 }
 
+button {
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+button:hover {
+	-webkit-transform: matrix(1.03, 0, 0, 1.03, 1, -1);
+	transform: matrix(1.03, 0, 0, 1.03, 1, -1);
+}
+
+button:active {
+	-webkit-transform: matrix(0.97, 0, 0, 0.97, -1, 1);
+	transform: matrix(0.97, 0, 0, 0.97, -1, 1);
+}
+
 #newURL:focus, #newURL:hover {
   outline: none;
   filter: brightness(120%);
