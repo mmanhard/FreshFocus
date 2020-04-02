@@ -40,6 +40,50 @@ li {
   font-size: 18px;
   margin-bottom: -4px;
   padding: 0;
+  height: 24px;
+  text-align: center;
+  position: relative;
+}
+
+li span {
+  transition: 0.3s;
+  position: relative;
+}
+
+li:hover span {
+  padding-right: 25px;
+}
+
+.btn-list  {
+  position: absolute;
+  background-color: var(--main-lite-color);
+  color: var(--main-dark-color);
+  border-radius: 7px;
+  border: none;
+  font-family: 'Rubik Mono One', sans-serif;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 18px;
+
+  transition: 0.3s;
+  opacity: 0;
+  right: 0;
+  width: 15px;
+}
+
+li:hover .btn-list {
+  opacity: 1;
+  right: 20px;
+  width: 30px;
+}
+
+li:hover .btn-list:hover {
+  opacity: 1;
+  right: 20px;
+  width: 30px;
+
+  -webkit-transform: translate(2px, -50%);
+  transform: translate(2px, -50%);
 }
 
 h1 {
@@ -78,13 +122,6 @@ hr {
   margin: 4px 12px 4px 18px;
   box-shadow: 0px 2px 3px 1px var(--main-shadow-color);
   font-size: 24px;
-  font-family: 'Rubik Mono One', sans-serif;
-}
-
-.btn-list {
-  background-color: var(--main-dark-color);
-  color: var(--main-lite-color);
-  border: none;
   font-family: 'Rubik Mono One', sans-serif;
 }
 
@@ -184,9 +221,13 @@ button:active {
 	transform: matrix(0.97, 0, 0, 0.97, -1, 1);
 }
 
-#newURL:focus, #newURL:hover {
+#newURL {
   outline: none;
-  filter: brightness(120%);
+}
+
+#newURL:hover {
+  cursor: pointer;
+  filter: brightness(110%);
 }
 
 #newURL::placeholder {
