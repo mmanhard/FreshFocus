@@ -7,6 +7,8 @@ var myTimer;
 
 chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) {
   if (result.blocked) {
+    checkTime(result.startTime, result.timeLimit)
+
     // Update the count down every 1 second
     myTimer = setInterval(function() {
       checkTime(result.startTime, result.timeLimit)

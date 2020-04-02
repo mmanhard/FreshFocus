@@ -11,6 +11,7 @@ chrome.storage.sync.get(['blocked', 'startTime', 'numSessions'], function(result
     quit();
   } else {
     document.getElementById("numSessions").innerHTML = result.numSessions;
+    checkTime(result.startTime, breakTimeLimit)
     myTimer = setInterval(function() {
       checkTime(result.startTime, breakTimeLimit)
     }, 1000);
