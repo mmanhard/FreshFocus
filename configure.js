@@ -50,14 +50,16 @@ document.getElementById("clearURLs").addEventListener("click", clearURLs);
 function startSessions(timeLimit, numSessions) {
 
   let startTime = new Date().getTime();
-  chrome.storage.sync.set({"startTime": startTime});
-  chrome.storage.sync.set({"timeLimit": timeLimit});
-  chrome.storage.sync.set({"numSessions": numSessions});
-  chrome.storage.sync.set({"blocked": true});
 
-  chrome.runtime.sendMessage({filter: "update"});
-  chrome.runtime.sendMessage({page: "session"});
-  window.location.href = "../views/session.html";
+  chrome.storage.sync.set({
+    "startTime": startTime,
+    "timeLimit": timeLimit,
+    "numSessions": numSessions,
+    "blocked": true
+  }, function() {
+    chrome.runtime.sendMessage({filter: "update", page: "session"});
+    window.location.href = "../views/session.html";
+  });
 }
 
 /******************************************/

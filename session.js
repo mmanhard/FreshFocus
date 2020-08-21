@@ -7,15 +7,17 @@ var myTimer;
 
 chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) {
   if (result.blocked) {
-    checkTime(result.startTime, result.timeLimit)
+    checkTime(result.startTime, result.timeLimit);
 
     // Update the count down every 1 second
     myTimer = setInterval(function() {
-      checkTime(result.startTime, result.timeLimit)
+      checkTime(result.startTime, result.timeLimit);
     }, 1000);
   } else {
-    window.location.href = "../views/configure.html"
-    chrome.runtime.sendMessage({page: "configure"});
+    // If we are not blocking the black list on this page, there is something wrong.
+    // Abandon all sessions and start over at the configure page.
+    chrome.runtime.sendMessage({quit: true});
+    window.location.href = "../views/configure.html";
   }
 });
 
@@ -23,13 +25,40 @@ chrome.storage.sync.get(['blocked', 'startTime', 'timeLimit'], function(result) 
 // EVENT LISTENERS
 /******************************************/
 
-// Tell the abandon button to stop the timer for the current session and switch to the break view once clicked.
+// Abandons the current session.
 const abandonSession = function() {
-    stopTimer(false);
-    window.location.href = "../views/break.html"
-    chrome.runtime.sendMessage({page: "break"});
+  clearInterval(myTimer);
+
+  let startTime = new Date().getTime();
+
+  // Set the new break start time, remove filters, and change the page.
+  chrome.storage.sync.set({
+    'startTime': startTime,
+    'blocked': false
+  }, function() {
+    chrome.runtime.sendMessage({filter: "remove", page: "break"});
+    window.location.href = "../views/break.html";
+  });
 };
 document.getElementById("abandon").addEventListener("click", abandonSession);
+
+// Listener for messages from the chrome runtime. Primarily used to switch
+// pages.
+const messageListener = function(request, sender, sendResponse) {
+  if (request.page) {
+    clearInterval(myTimer);
+
+    switch (request.page) {
+      case "configure":
+        window.location.href = "../views/configure.html";
+        break;
+      case "break":
+        window.location.href = "../views/break.html";
+        break;
+    }
+  }
+};
+chrome.runtime.onMessage.addListener(messageListener);
 
 /******************************************/
 // Timer methods
@@ -40,89 +69,21 @@ function checkTime(start, limit) {
   let now = new Date().getTime();
 
   // Calculate the time remaining.
-  let distance = now - start
+  let distance = now - start;
   let remaining = limit - distance
 
   // Convert time remaining to minutes and seconds.
   let mins, secs;
-  if (remaining > 0) {
+  if (remaining >= 0) {
     mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
     secs = Math.floor((remaining % (1000 * 60)) / 1000);
     setTime(mins, secs);
-  } else {
-    stopTimer(true);
   }
 }
 
 function setTime(mins, secs) {
   document.getElementById("mins").innerHTML = mins;
   document.getElementById("secs").innerHTML = addZeroPad(secs, 2);
-}
-
-function stopTimer(success) {
-  clearInterval(myTimer);
-
-  let startTime = new Date().getTime();
-
-  chrome.storage.sync.set({'startTime': startTime, 'blocked': false});
-
-  chrome.runtime.sendMessage({filter: "remove"});
-
-  if (success) {
-    chrome.storage.sync.get(["numSessions"], function(result) {
-      const numSessions = result.numSessions - 1;
-      if (numSessions > 0) {
-        displaySessionOverNotif(numSessions);
-
-        chrome.storage.sync.set({"numSessions": numSessions});
-        window.location.href = "../views/break.html";
-        chrome.runtime.sendMessage({page: "break"});
-      } else {
-        displayAllSessionsOverNotif();
-
-        window.location.href = "../views/configure.html";
-        chrome.runtime.sendMessage({page: "configure"});
-        chrome.storage.sync.remove(['timeLimit', 'numSessions']);
-        return;
-      }
-    });
-  } else {
-    window.location.href = "../views/break.html"
-    chrome.runtime.sendMessage({page: "break"});
-  }
-}
-
-/******************************************/
-// Notifications
-/******************************************/
-
-const sessionOverID = 'session_over';
-const allSessionsOverID = 'all_sessions_over'
-
-function displaySessionOverNotif(numSession) {
-  const options = {
-    type: "basic",
-    title: "Session Over!",
-    message: "You should take a break now.",
-    iconUrl: "../assets/logo-128.png"
-  };
-
-  chrome.notifications.clear(sessionOverID, function() {
-    chrome.notifications.create(sessionOverID, options);
-  });
-}
-
-function displayAllSessionsOverNotif() {
-  const options = {
-    type: "basic",
-    title: "You're done!",
-    message: "Time to take a long break.",
-    iconUrl: "../assets/logo-128.png"
-  };
-
-  chrome.notifications.clear(allSessionsOverID, function() {
-    chrome.notifications.create(allSessionsOverID, options);
-  });
 }
 
 /******************************************/
