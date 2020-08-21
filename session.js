@@ -72,10 +72,14 @@ function stopTimer(success) {
     chrome.storage.sync.get(["numSessions"], function(result) {
       const numSessions = result.numSessions - 1;
       if (numSessions > 0) {
+        displaySessionOverNotif(numSessions);
+
         chrome.storage.sync.set({"numSessions": numSessions});
-        window.location.href = "../views/break.html"
+        window.location.href = "../views/break.html";
         chrome.runtime.sendMessage({page: "break"});
       } else {
+        displayAllSessionsOverNotif();
+
         window.location.href = "../views/configure.html";
         chrome.runtime.sendMessage({page: "configure"});
         chrome.storage.sync.remove(['timeLimit', 'numSessions']);
@@ -86,6 +90,39 @@ function stopTimer(success) {
     window.location.href = "../views/break.html"
     chrome.runtime.sendMessage({page: "break"});
   }
+}
+
+/******************************************/
+// Notifications
+/******************************************/
+
+const sessionOverID = 'session_over';
+const allSessionsOverID = 'all_sessions_over'
+
+function displaySessionOverNotif(numSession) {
+  const options = {
+    type: "basic",
+    title: "Session Over!",
+    message: "You should take a break now.",
+    iconUrl: "../assets/logo-128.png"
+  };
+
+  chrome.notifications.clear(sessionOverID, function() {
+    chrome.notifications.create(sessionOverID, options);
+  });
+}
+
+function displayAllSessionsOverNotif() {
+  const options = {
+    type: "basic",
+    title: "You're done!",
+    message: "Time to take a long break.",
+    iconUrl: "../assets/logo-128.png"
+  };
+
+  chrome.notifications.clear(allSessionsOverID, function() {
+    chrome.notifications.create(allSessionsOverID, options);
+  });
 }
 
 /******************************************/
