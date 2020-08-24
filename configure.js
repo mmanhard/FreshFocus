@@ -47,10 +47,13 @@ document.getElementById("clearURLs").addEventListener("click", clearURLs);
 // Timer methods
 /******************************************/
 
+// Starts a set of sessions given a time limit and a number of sessions.
 function startSessions(timeLimit, numSessions) {
 
   let startTime = new Date().getTime();
 
+  // Set the new start time, the time limit for each session, number of sessions,
+  // add filters, and navigate to the session page.
   chrome.storage.sync.set({
     "startTime": startTime,
     "timeLimit": timeLimit,
@@ -66,11 +69,17 @@ function startSessions(timeLimit, numSessions) {
 // Blacklist methods
 /******************************************/
 
+// Adds the URL indicated in the text field 'newURL' to the blacklist.
 function addToBlackList() {
+  // Take the new url from the DOM and convert it to a valid URL pattern.
   let newURL = document.getElementById("newURL").value;
   document.getElementById("newURL").value = '';
   newURL = convertToValidURLPattern(newURL);
+
+  // Check if the new URL is not empty.
   if (newURL.length > 0) {
+    // If not empty, add the url to the list of urls in storage and update
+    // the displayed black list.
     chrome.storage.sync.get(['urls'], function(result){
       let urls;
       if (result.urls) {
@@ -79,17 +88,21 @@ function addToBlackList() {
         urls = [];
       }
       urls.push(newURL);
-      chrome.storage.sync.set({"urls": JSON.stringify(urls)});
 
-      displayBlackListURL(newURL);
+      chrome.storage.sync.set({
+        "urls": JSON.stringify(urls)
+      }, displayBlackListURL(newURL));
     });
   } else {
     console.log("Invalid URL");
   }
 }
 
+// Clears the blacklist from storage.
 function clearBlackList() {
   chrome.storage.sync.remove(['urls']);
+
+  // Remove all displayed urls from the DOM.
   let lis = document.getElementById("blacklist").children;
   for (i = lis.length-1; i > 0; i--) {
     document.getElementById("blacklist").removeChild(lis[i]);
@@ -98,6 +111,7 @@ function clearBlackList() {
 
 }
 
+// Displays the black list.
 function displayBlackList() {
   chrome.storage.sync.get(['urls'], function(result){
     if (result.urls) {
@@ -109,11 +123,14 @@ function displayBlackList() {
   });
 }
 
-const test = (event) => {
+// Event handler for deleting a url from the blacklist.
+const deleteFromBlacklist = (event) => {
+  // Get the index of the selected url.
   let li = event.currentTarget.parentNode;
   let ul = li.parentNode;
   let index = Array.from(ul.children).indexOf(li);
 
+  // Delete the url from the list of urls in storage and update the display.
   chrome.storage.sync.get(['urls'], function(result){
     let urls;
     if (result.urls) {
@@ -126,17 +143,20 @@ const test = (event) => {
 
 };
 
+// Displays a url in the blacklist.
 function displayBlackListURL(url) {
-    var li = document.createElement("li");
-    var span = document.createElement("span");
-    var btn = document.createElement("button");
+
+    // Create the element that encompasses the url.
+    let li = document.createElement("li");
+    let span = document.createElement("span");
+    let btn = document.createElement("button");
     li.appendChild(span);
     li.appendChild(btn);
     span.textContent = formatURL(url);
     btn.textContent = "-";
     btn.className = "btn-list";
 
-    btn.addEventListener("click",test);
+    btn.addEventListener("click", deleteFromBlacklist);
     document.getElementById("blacklist").appendChild(li);
 }
 
@@ -144,14 +164,21 @@ function displayBlackListURL(url) {
 // Helper methods
 /******************************************/
 
+// Changes the time displayed on the page. If addFlag is true, adds to the time.
+// Otherwise, subtracts from the time. By default, the minutes change by 5 for
+// times greater than 5 minutes. Below 5 minutes, the change is 1 minute.
+// The max number of mins is 60 and the min is 1.
 function changeTime(addFlag) {
   const mins = Number(document.getElementById("mins").innerHTML);
 
-  var minChange = defaultMinChange;
+  // Determine the appropriate change in minutes.
+  let minChange = defaultMinChange;
   if (mins + addFlag <= minChange) {
     minChange = smallMinChange;
   }
 
+  // Change the minutes displayed if the updated mins is between maxMins and
+  // minMins.
   if (addFlag) {
     if (mins < maxMins) {
       document.getElementById("mins").innerHTML = mins + minChange;
@@ -163,6 +190,8 @@ function changeTime(addFlag) {
   }
 }
 
+// Changes the number of sessions displayed on the page. If incrementFlag is
+// true, adds 1 to the number of sessions. Otherwise, subrtracts 1.
 function changeSession(incrementFlag) {
   const numSessions = Number(document.getElementById("numSessions").innerHTML);
 
