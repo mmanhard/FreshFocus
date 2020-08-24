@@ -1,3 +1,5 @@
+import { pageSwitcher, setTime } from './utils.js';
+
 const breakTimeLimit = 5 * 1000 * 60;
 
 var myTimer;
@@ -14,11 +16,11 @@ chrome.storage.sync.get(['blocked', 'startTime', 'numSessions'], function(result
   } else {
     document.getElementById("numSessions").innerHTML = result.numSessions;
 
-    checkTime(result.startTime, breakTimeLimit);
+    setTime(result.startTime, breakTimeLimit);
 
     // Update the count down every 1 second
     myTimer = setInterval(function() {
-      checkTime(result.startTime, breakTimeLimit);
+      setTime(result.startTime, breakTimeLimit);
     }, 1000);
   }
 });
@@ -32,15 +34,7 @@ chrome.storage.sync.get(['blocked', 'startTime', 'numSessions'], function(result
 const messageListener = function(request, sender, sendResponse) {
   if (request.page) {
     clearInterval(myTimer);
-
-    switch (request.page) {
-      case "configure":
-        window.location.href = "../views/configure.html";
-        break;
-      case "session":
-        window.location.href = "../views/session.html";
-        break;
-    }
+    pageSwitcher(request.page);
   }
 };
 chrome.runtime.onMessage.addListener(messageListener);
@@ -69,38 +63,3 @@ const quit = function() {
 };
 document.getElementById("quit").addEventListener("click", quit);
 
-/******************************************/
-// Timer methods
-/******************************************/
-
-function checkTime(start, limit) {
-  // Get the current time.
-  let now = new Date().getTime();
-
-  // Calculate the time remaining.
-  let distance = now - start;
-  let remaining = limit - distance;
-
-  // Convert time remaining to minutes and seconds.
-  let mins, secs;
-  if (remaining > 0) {
-    mins = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
-    secs = Math.floor((remaining % (1000 * 60)) / 1000);
-    setTime(mins, secs);
-  }
-}
-
-function setTime(mins, secs) {
-  document.getElementById("mins").innerHTML = mins;
-  document.getElementById("secs").innerHTML = addZeroPad(secs, 2);
-}
-
-/******************************************/
-// Helper methods
-/******************************************/
-
-function addZeroPad(num, numDigits) {
-  strNum = String(num);
-  while (strNum.length < numDigits) {strNum = '0' + strNum};
-  return strNum;
-}
