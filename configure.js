@@ -3,6 +3,7 @@ const defaultMins = 25;
 const defaultMinChange = 5, smallMinChange = 1;
 const minMins = 1,          maxMins = 60;
 const minNumSessions = 1,   maxNumSessions = 8;
+const enterKey = 13;
 
 /******************************************/
 // MAIN SCRIPT
@@ -36,7 +37,7 @@ document.getElementById("decSession").addEventListener("click", decrementSession
 
 // Create event listeners for adding to or clearing the blacklist.
 const addURL = function(event) {
-  if(event.which === 13) {
+  if(event.which === enterKey) {
     addToBlackList();
   }};
 document.getElementById("newURL").addEventListener("keyup", addURL);
