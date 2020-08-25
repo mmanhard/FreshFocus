@@ -11,6 +11,10 @@ does a great job of explaining it!
 
 Fresh Focus was built with pure JS, CSS, and HTML.
 
+## Live Version
+
+This extension is available on the Chrome Web Store. [Check it out here!](https://chrome.google.com/webstore/detail/fresh-focus/fjkljljefpifhcppppgmjinfmkgjooap/related?hl=en-US)
+
 ## Usage
 
 To use this extension, follow these steps in a Google Chrome browser:
@@ -24,19 +28,12 @@ this repo to your machine.
 After that, you're all set to try out the extension. Check it out in the
 top-right corner of your Chrome browser.
 
-## Why build Fresh Focus when there are other Pomodoro tools out there?
+## Why build Fresh Focus?
 
-Two reasons.
-
-The first is practical: Most of the tools out there give users the flexibility
-of modifying the Pomodoro technique (e.g. changing length and number of sessions).
-That being said, I couldn't find any that tackled the problem of eliminating
-distractions. That's where website blocking comes into play.
-
-The second is personal: This was my first foray into the world of web development.
-I wanted to get more comfortable with writing plain-old Javascript and using
-CSS/HTML. Additionally, this extension has both a background page and a popup
-page, each with separate DOMs. Understanding how these pages would communicate
-posed an interesting challenge that I wouldn't have encountered while working on
-a typical web app. Specifically, developing this app allowed me to explore
-technologies like Local Storage and message passing.
+This was my first foray into the world of web development. I wanted to get more
+comfortable with writing plain-old Javascript and using CSS/HTML. Additionally,
+this extension has both a background page and a popup page, each with separate DOMs.
+Understanding how these pages would communicate posed an interesting challenge
+that I wouldn't have encountered while working on a typical web app. Specifically,
+developing this app allowed me to explore technologies like Local Storage and message
+passing.
