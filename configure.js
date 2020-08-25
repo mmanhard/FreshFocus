@@ -5,6 +5,14 @@ const minMins = 1,          maxMins = 60;
 const minNumSessions = 1,   maxNumSessions = 8;
 const enterKey = 13;
 
+const schemeSeparator = "://";
+const pathSeparator = "/";
+const defaultScheme = "*";
+const allSubdomains = "*.";
+const defaultTopLvlDomain = ".com";
+const defaultPath = "/*";
+const validSchemes = ["*", "http", "https"];
+
 /******************************************/
 // MAIN SCRIPT
 /******************************************/
@@ -70,18 +78,18 @@ function startSessions(timeLimit, numSessions) {
 // Blacklist methods
 /******************************************/
 
-// Adds the URL indicated in the text field 'newURL' to the blacklist.
+// Adds the URL indicated in the text field "newURL" to the blacklist.
 function addToBlackList() {
   // Take the new url from the DOM and convert it to a valid URL pattern.
   let newURL = document.getElementById("newURL").value;
-  document.getElementById("newURL").value = '';
+  document.getElementById("newURL").value = "";
   newURL = convertToValidURLPattern(newURL);
 
   // Check if the new URL is not empty.
   if (newURL.length > 0) {
     // If not empty, add the url to the list of urls in storage and update
     // the displayed black list.
-    chrome.storage.sync.get(['urls'], function(result){
+    chrome.storage.sync.get(["urls"], function(result){
       let urls;
       if (result.urls) {
         urls = JSON.parse(result.urls);
@@ -101,7 +109,7 @@ function addToBlackList() {
 
 // Clears the blacklist from storage.
 function clearBlackList() {
-  chrome.storage.sync.remove(['urls']);
+  chrome.storage.sync.remove(["urls"]);
 
   // Remove all displayed urls from the DOM.
   let lis = document.getElementById("blacklist").children;
@@ -114,7 +122,7 @@ function clearBlackList() {
 
 // Displays the black list.
 function displayBlackList() {
-  chrome.storage.sync.get(['urls'], function(result){
+  chrome.storage.sync.get(["urls"], function(result){
     if (result.urls) {
       let urls = JSON.parse(result.urls);
       urls.forEach((url) => {
@@ -132,7 +140,7 @@ const deleteFromBlacklist = (event) => {
   let index = Array.from(ul.children).indexOf(li);
 
   // Delete the url from the list of urls in storage and update the display.
-  chrome.storage.sync.get(['urls'], function(result){
+  chrome.storage.sync.get(["urls"], function(result){
     let urls;
     if (result.urls) {
       urls = JSON.parse(result.urls);
@@ -207,43 +215,92 @@ function changeSession(incrementFlag) {
   }
 }
 
-// !! NEEDS AN UPDATE!!
+// Converts a user input url to a valid URL pattern. If the provided url cannot
+// be converted to a valid URL pattern, returns an empty string.
+//
+// Valid URL patterns satisfy the following definition:
+// url-pattern := "<scheme>://<host><path>"
+//    where <scheme> := "*" | "http" | "https"
+//          <host> := "*" | "*." <any char except "/" and "*">+
+//          <path> := "/" <any chars>
+//
+// If scheme not provided, "*" is used by default.
+// If no top-level domain provided in host, ".com" is used by default.
+// If host not provided, the pattern is not valid.
+// If path not provided, "/*" is used by default.
+//
 function convertToValidURLPattern(url) {
-//   <url-pattern> := <scheme>://<host><path>
-// <scheme> := '*' | 'http' | 'https' | 'file' | 'ftp'
-// <host> := '*' | '*.' <any char except '/' and '*'>+
-// <path> := '/' <any chars>
-  const schemeSeparator = "://";
 
-  // Determine scheme
-  let scheme, host, path;
-  let schemeEnd, hostEnd;
-  schemeEnd = url.indexOf(schemeSeparator);
+  url = url.toLowerCase();
+
+  // Determine the scheme, if provided.
+  let scheme;
+  const schemeEnd = url.indexOf(schemeSeparator);
   if (schemeEnd <= 0) {
-    scheme = "*";
+    scheme = defaultScheme;
   } else {
-    scheme = url.substr(0,schemeEnd);
+    scheme = url.substr(0, schemeEnd);
+    if (! validSchemes.includes(scheme)) return "";
   }
 
+  // Remove scheme from the url if it was provided.
   if (schemeEnd >= 0) {
     url = url.substr(schemeEnd+schemeSeparator.length);
   }
-  console.log(url);
 
-  // Determine host
-  host = url;
+  // Determine the path, if provided.
+  let path;
+  const hostEnd = url.indexOf(pathSeparator);
+  if (hostEnd < 0) {
+    path = defaultPath;
+  } else {
+    path = url.substr(hostEnd);
+  }
 
-  // Determine path
-  path = "*";
-  return scheme+schemeSeparator+"*."+host+"/"+path;
+  // Remove path from url if it was provided.
+  if (hostEnd > 0) {
+    url = url.substr(0, hostEnd);
+  }
+
+  // Determine if the provided host is valid.
+  let host;
+  if (url.length == 0 || url.length == 2) return "";
+  if (url.length == 1) {
+    if (url === "*") host = url;
+    else return "";
+  } else {
+    const numberStars = url.split("*").length - 1;
+
+    // Check if the host starts with '*.'.
+    if (url.startsWith(allSubdomains)) {
+      // Only 1 star can be provided in this case and there must be a character
+      // after '*.'
+      if (numberStars > 1 || url.length == allSubdomains.length) return "";
+      else host = url;
+    } else {
+      // No stars should have been provided in this case.
+      if (numberStars > 0) return "";
+      else host = allSubdomains + url;
+    }
+  }
+
+  // Determine if a top level domain was provided.
+  const numberPeriods = host.split(".").length - 1;
+  if (numberPeriods <= 1) host = host + defaultTopLvlDomain;
+
+  return scheme+schemeSeparator+host+path;
 }
 
+// Formats the URL to be readable.
+// Specifically, extracts the scheme and the "all subdomains" regular
+// expression '*.' from the url. Also, removes the path if it is the default
+// path '/*'.
 function formatURL(url) {
-  const schemeSeparator = "://*.";
-  const pathSeparator = "/";
-
   schemeEnd = url.indexOf(schemeSeparator);
-  url = url.substr(schemeEnd+schemeSeparator.length);
-  hostEnd = url.indexOf(pathSeparator);
-  return url.substr(0,hostEnd);
+  url = url.substr(schemeEnd+schemeSeparator.length+allSubdomains.length);
+  if (url.endsWith(defaultPath)) {
+    return url.substr(0, url.length - defaultPath.length)
+  } else {
+    return url;
+  }
 }
